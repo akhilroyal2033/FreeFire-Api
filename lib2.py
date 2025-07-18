@@ -89,10 +89,15 @@ async def create_jwt(region: str) -> Tuple[str, str, str]:
         'X-GA': "v1 1",
         'ReleaseVersion': RELEASEVERSION
     }
+    # async with httpx.AsyncClient() as client:
     async with httpx.AsyncClient() as client:
         response = await client.post(url, data=payload, headers=headers)
+        print("Status Code:", response.status_code)
+        print("Raw Response:", response.content)
+    
         response_content = response.content
         message = json.loads(json_format.MessageToJson(decode_protobuf(response_content, FreeFire_pb2.LoginRes)))
+
         token = message.get("token", "0")
         region = message.get("lockRegion", "0")
         serverUrl = message.get("serverUrl", "0")
